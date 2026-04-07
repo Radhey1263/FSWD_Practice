@@ -1,1 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task App</title>
+    <script src="angular.js"></script>
+    <script src="module.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: bisque;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            margin: 0 0 10px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        table td, table th {
+            padding: 8px 12px;
+            border: 1px solid #ccc;
+        }
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        button {
+            margin: 2px;
+            padding: 5px 12px;
+            cursor: pointer;
+            border: none;
+            border-radius: 3px;
+            font-size: 13px;
+        }
+        button[type="submit"], button.add-btn {
+            background-color: #4CAF50;
+            color: white;
+        }
+        button.delete-btn {
+            background-color: #e53935;
+            color: white;
+        }
+        button.edit-btn {
+            background-color: #1976D2;
+            color: white;
+        }
+        button.update-btn {
+            background-color: #FB8C00;
+            color: white;
+        }
+        button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+        .form-table td {
+            padding: 8px 12px;
+        }
+        .msg-bar {
+            background-color: yellow;
+            color: red;
+            text-align: center;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            min-height: 40px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            padding: 5px;
+            width: 200px;
+            border: 1px solid #aaa;
+            border-radius: 3px;
+        }
+        .status-started   { color: #1565C0; font-weight: bold; }
+        .status-progress  { color: #E65100; font-weight: bold; }
+        .status-completed { color: #2E7D32; font-weight: bold; }
+    </style>
+</head>
+<body ng-app="taskApp" ng-controller="taskCtrl">
 
+    <!-- Task Details Table -->
+    <div class="section">
+        <h1>Task Details</h1>
+        <table border="1">
+            <tr>
+                <td><b>Task ID</b></td>
+                <td><b>Task Name</b></td>
+                <td><b>Status</b></td>
+                <td><b>Edit / Delete</b></td>
+            </tr>
+            <tr ng-repeat="item in task track by $index">
+                <td>{{item.taskID}}</td>
+                <td>{{item.taskName}}</td>
+                <td>
+                    <span ng-class="{
+                        'status-started':   item.status === 'Started',
+                        'status-progress':  item.status === 'In Progress',
+                        'status-completed': item.status === 'Completed'
+                    }">{{item.status}}</span>
+                </td>
+                <td>
+                    <button class="delete-btn" ng-click="deleteTask(item.taskID)">Delete</button>
+                    <button class="edit-btn"   ng-click="edit(item)">Edit</button>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- Add / Update Task Form -->
+    <div class="section">
+        <h1>{{editStat ? 'Update Task' : 'Add Task'}}</h1>
+        <center>
+        <form ng-submit="addNewTask(newTask)">
+            <table class="form-table">
+                <tr>
+                    <td>Task ID :</td>
+                    <td><input type="text" ng-model="newTask.taskID" ng-disabled="editStat"></td>
+                </tr>
+                <tr>
+                    <td>Task Name :</td>
+                    <td><input type="text" ng-model="newTask.taskName"></td>
+                </tr>
+                <tr>
+                    <td>Task Status :</td>
+                    <td>
+                        <input type="radio" name="rd" ng-model="newTask.status" value="Started"> Started <br>
+                        <input type="radio" name="rd" ng-model="newTask.status" value="In Progress"> In Progress <br>
+                        <input type="radio" name="rd" ng-model="newTask.status" value="Completed"> Completed<br>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" style="text-align:center;">
+                        <button type="submit"  class="add-btn"    ng-disabled="editStat">Add New Task</button>
+                        <button type="button"  class="update-btn" ng-disabled="!editStat" ng-click="updateTask(newTask)">Update Task</button>
+                    </td>
+                </tr>
+            </table>
+        </form>
+        </center>
+    </div>
+
+    <!-- Message Bar -->
+    <div class="msg-bar">
+        Message : {{msg}}
+    </div>
+
+</body>
+</html>
